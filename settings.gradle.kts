@@ -13,6 +13,8 @@ plugins {
 
 include(":ansible")
 
+include(":apps:kira")
+
 include(":plugins:announcements-velocity")
 include(":plugins:banstick-paper")
 include(":plugins:bastion-paper")

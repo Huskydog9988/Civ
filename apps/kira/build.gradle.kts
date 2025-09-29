@@ -1,40 +1,38 @@
 plugins {
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.serialization") version "1.9.10"
-    application
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
+
+group = "net.civmc.kira"
+version = "2.1.1"
+description = "Kira"
 
 kotlin {
-    jvmToolchain(17)
-}
-
-repositories {
-    mavenCentral()
-    maven("https://m2.dv8tion.net/releases")
+    jvmToolchain(21)
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation(libs.kotlinx.coroutines.core)
 
-    implementation("org.json:json:20160810")
-    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.18.0")
-    implementation("net.dv8tion:JDA:4.4.0_350")
-    implementation("com.zaxxer:HikariCP:2.4.6")
-    implementation("org.postgresql:postgresql:42.2.5")
-    implementation("com.rabbitmq:amqp-client:5.6.0")
-    implementation("org.jsoup:jsoup:1.14.2")
-    implementation("org.java-websocket:Java-WebSocket:1.5.0")
-    implementation("org.apache.commons:commons-collections4:4.4")
+    implementation(libs.json)
+    implementation(libs.log4j.api)
+    implementation(libs.log4j.core)
+    implementation(libs.jda)
+    implementation(libs.hikaricp)
+    implementation(libs.postgresql)
+    implementation(libs.rabbitmq.client)
+    implementation(libs.jsoup)
+    implementation(libs.java.webSocket)
+    implementation(libs.commons.collections4)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.kotlinx.serialization.json)
 
-    implementation("com.sksamuel.hoplite:hoplite-core:2.7.5")
-    implementation("com.sksamuel.hoplite:hoplite-yaml:2.7.5")
+    implementation(libs.hoplite.core)
+    implementation(libs.hoplite.yaml)
 
-    implementation("io.insert-koin:koin-core:3.5.0")
-    testImplementation("io.insert-koin:koin-test:3.5.0")
-    testImplementation("io.insert-koin:koin-test-junit5:3.5.0")
+    implementation(libs.koin.core)
+    testImplementation(libs.koin.test)
+    testImplementation(libs.koin.test.junit5)
 }
 
 tasks.test {
