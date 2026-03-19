@@ -1,11 +1,13 @@
 package isaac.bastion.listeners;
 
+import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
+import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import io.lumine.mythic.bukkit.events.MythicMobSpawnEvent;
 import isaac.bastion.BastionBlock;
 import isaac.bastion.manager.BastionBlockManager;
 import java.util.Set;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,7 +21,7 @@ public class MobListener implements Listener {
         this.blockManager = blockManager;
     }
 
-    // Fix for https://git.lumine.io/mythiccraft/MythicMobs/-/issues/2140, otherwise only one listener would be necessary
+    // Fix for https://git.lumine.io/mythiccraft/MythicMobs/-/issues/2158, otherwise only one listener would be necessary
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void on(MythicMobSpawnEvent event) {
         if (!event.getMobType().getInternalName().equals("Bleeze")) {
@@ -37,8 +39,7 @@ public class MobListener implements Listener {
         if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) {
             return;
         }
-        Class<? extends Entity> clazz = event.getEntityType().getEntityClass();
-        if (clazz == null || !Monster.class.isAssignableFrom(clazz)) {
+        if (!(event.getEntity() instanceof Monster)) {
             return;
         }
         Set<BastionBlock> preblocking = blockManager.getBlockingBastions(event.getLocation(), b -> b.getType().isBlockMobs() && b.isMature());
@@ -46,6 +47,28 @@ public class MobListener implements Listener {
             return;
         }
 
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityPathfind(EntityPathfindEvent event) {
+        if (!(event.getEntity() instanceof Monster)) {
+            return;
+        }
+        Set<BastionBlock> blocking = blockManager.getBlockingBastions(event.getLoc(), b -> b.getType().isBlockMobs() && b.isMature());
+        if (blocking.isEmpty()) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onSlimePathfind(SlimePathfindEvent event) {
+        Slime slime = event.getEntity();
+        Set<BastionBlock> blocking = blockManager.getBlockingBastions(slime.getLocation(), b -> b.getType().isBlockMobs() && b.isMature());
+        if (blocking.isEmpty()) {
+            return;
+        }
         event.setCancelled(true);
     }
 }
