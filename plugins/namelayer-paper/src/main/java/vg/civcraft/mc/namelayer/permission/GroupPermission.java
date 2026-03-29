@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import org.bukkit.Bukkit;
 import vg.civcraft.mc.namelayer.GroupManager.PlayerType;
 import vg.civcraft.mc.namelayer.NameLayerPlugin;
 import vg.civcraft.mc.namelayer.database.GroupManagerDao;
@@ -13,6 +16,7 @@ public class GroupPermission {
 
     private Map<PlayerType, List<PermissionType>> perms;
     private GroupManagerDao db = NameLayerPlugin.getGroupManagerDao();
+    private final Lock permissionWriteLock = new ReentrantLock(true);
 
     private Group group;
 
@@ -74,18 +78,19 @@ public class GroupPermission {
      * @return Returns false if the PlayerType already has the permission.
      */
     public boolean addPermission(PlayerType pType, PermissionType permType) {
-        return addPermission(pType, permType, true);
-    }
-
-    public boolean addPermission(PlayerType pType, PermissionType permType, boolean savetodb) {
         List<PermissionType> playerPerms = perms.get(pType);
         if (playerPerms == null || playerPerms.contains(permType)) {
             return false;
         }
         playerPerms.add(permType);
-        if (savetodb) {
-            db.addPermission(group.getName(), pType.name(), Collections.singletonList(permType));
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(NameLayerPlugin.getInstance(), () -> {
+            permissionWriteLock.lock();
+            try {
+                db.addPermission(group.getName(), pType.name(), Collections.singletonList(permType));
+            } finally {
+                permissionWriteLock.unlock();
+            }
+        });
         return true;
     }
 
@@ -97,18 +102,19 @@ public class GroupPermission {
      * @return Returns false if the PlayerType doesn't have that permission.
      */
     public boolean removePermission(PlayerType pType, PermissionType permType) {
-        return removePermission(pType, permType, true);
-    }
-
-    public boolean removePermission(PlayerType pType, PermissionType permType, boolean savetodb) {
         List<PermissionType> playerPerms = perms.get(pType);
         if (playerPerms == null || !playerPerms.contains(permType)) {
             return false;
         }
         playerPerms.remove(permType);
-        if (savetodb) {
-            db.removePermissionAsync(group.getName(), pType, permType);
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(NameLayerPlugin.getInstance(), () -> {
+            permissionWriteLock.lock();
+            try {
+                db.removePermission(group.getName(), pType, permType);
+            } finally {
+                permissionWriteLock.unlock();
+            }
+        });
         return true;
     }
 
