@@ -654,6 +654,6 @@ rebalanceTntMinecart: true
 
 
 mace:
-  cooldown: 1200
+  cooldown: 800
   max_damage: 38
   wind_cooldown: 3
