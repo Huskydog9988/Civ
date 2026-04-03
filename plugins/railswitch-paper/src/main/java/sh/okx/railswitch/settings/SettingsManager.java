@@ -11,7 +11,9 @@ import vg.civcraft.mc.civmodcore.players.scoreboard.bottom.BottomLine;
 import vg.civcraft.mc.civmodcore.players.scoreboard.bottom.BottomLineAPI;
 import vg.civcraft.mc.civmodcore.players.scoreboard.side.CivScoreBoard;
 import vg.civcraft.mc.civmodcore.players.scoreboard.side.ScoreBoardAPI;
+import vg.civcraft.mc.civmodcore.players.settings.PlayerSetting;
 import vg.civcraft.mc.civmodcore.players.settings.impl.DisplayLocationSetting;
+import java.util.UUID;
 
 /**
  * Manages the initialisation and registration of menu settings.
@@ -39,7 +41,7 @@ public final class SettingsManager {
         destSetting = new DestinationSetting(plugin);
         resetSetting = new ResetSetting(plugin, destSetting);
         destDisplayLocation = new DisplayLocationSetting(plugin, DisplayLocationSetting.DisplayLocation.SIDEBAR,
-            "Dest Display Location", "destDisplayLocation", new ItemStack(Material.ARROW), "the destination");
+            "Dest Display Location", "destDisplayLocation", new ItemStack(Material.ARROW), "destination");
         // Register those elements
         menu.registerToParentMenu();
         menu.registerSetting(destSetting);
@@ -48,6 +50,14 @@ public final class SettingsManager {
 
         destScoreBoard = ScoreBoardAPI.createBoard("RailSwitchDestDisplay");
         destBottomLine = BottomLineAPI.createBottomLine("RailSwitchDestDisplay", 4);
+
+        // update player ui if scoreboard display location setting is changed
+        destDisplayLocation.registerListener((UUID uuid, PlayerSetting<String> setting, String oldValue, String newValue) -> {
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null) {
+                updateDestScoreboardHud(player);
+            }
+        });
     }
 
     /**
@@ -83,7 +93,6 @@ public final class SettingsManager {
                 player.sendMessage(ChatColor.RED + "Could not set your destination.");
             }
         }
-        // updateDestScoreboardHud(player);
     }
 
     /**
@@ -104,19 +113,21 @@ public final class SettingsManager {
         String dest = getDestination(p);
         if (Strings.isNullOrEmpty(dest)) {
             // remove if dest is empty
-            if (destDisplayLocation.showOnSidebar(p.getUniqueId())) {
-                destScoreBoard.hide(p);
-            }
-            if (destDisplayLocation.showOnActionbar(p.getUniqueId())) {
-                destBottomLine.removePlayer(p);
-            }
+            destScoreBoard.hide(p);
+            destBottomLine.removePlayer(p);
         } else {
             // set dest on hud
             if (destDisplayLocation.showOnSidebar(p.getUniqueId())) {
                 destScoreBoard.set(p, ChatColor.GOLD + "Dest: " + ChatColor.AQUA + dest);
+            } else {
+                // remove if disabled as the dest might still be showing on the sidebar from before
+                destScoreBoard.hide(p);
             }
             if (destDisplayLocation.showOnActionbar(p.getUniqueId())) {
                 destBottomLine.updatePlayer(p, ChatColor.GOLD + "Dest: " + ChatColor.AQUA + dest);
+            } else {
+                // remove if disabled as the dest might still be showing on the actionbar from before
+                destBottomLine.removePlayer(p);
             }
         }
     }

@@ -201,13 +201,14 @@ public abstract class PlayerSetting<T> {
      * @param value  New value
      */
     public void setValue(UUID player, T value) {
+        T oldValue = getValue(player);
+        values.put(player, value);
         if (listeners != null) {
-            T oldValue = getValue(player);
             for (SettingChangeListener<T> listener : listeners) {
                 listener.handle(player, this, oldValue, value);
+
             }
         }
-        values.put(player, value);
     }
 
     /**
