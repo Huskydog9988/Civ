@@ -121,6 +121,8 @@ public class PermissionType {
 
         //perm level given to members when they join with a password
         registerPermission("JOIN_PASSWORD", members);
+        //allows editing a groups color
+        registerPermission("EDIT_COLOR", new ArrayList<>(adminAndAbove), "Allows editing the color of the group");
     }
 
     private String name;
@@ -162,5 +164,11 @@ public class PermissionType {
 
     public boolean getCanBeBlacklisted() {
         return canBeBlacklisted;
+    }
+
+    /// Tests whether this permission is an "owner" permission, meaning that, ***by default***, only [PlayerType#OWNER]
+    /// can use it.
+    public boolean isOwnerPermission() {
+        return List.of(PlayerType.OWNER).equals(this.defaultPermLevels);
     }
 }

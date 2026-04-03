@@ -1,11 +1,15 @@
 package vg.civcraft.mc.namelayer;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
+import javax.sql.DataSource;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import vg.civcraft.mc.civmodcore.ACivMod;
 import vg.civcraft.mc.civmodcore.dao.DatabaseCredentials;
@@ -45,8 +49,12 @@ public class NameLayerPlugin extends ACivMod {
         instance = this;
         loadDatabases();
         ClassHandler.Initialize(Bukkit.getServer());
-        new NameAPI(new GroupManager());
-        registerListeners();
+
+        NameLayerAPI.init(new GroupManager(), getNameApiDataSource());
+        getServer().getPluginManager().registerEvents(new NameLayerAPI(), this);
+
+        registerListener(new PlayerListener());
+
         if (loadGroups) {
             PermissionType.initialize();
             blackList = new BlackList();
@@ -59,10 +67,6 @@ public class NameLayerPlugin extends ACivMod {
         }
     }
 
-    public void registerListeners() {
-        registerListener(new PlayerListener());
-    }
-
     @Override
     public void onDisable() {
         super.onDisable();
@@ -72,7 +76,7 @@ public class NameLayerPlugin extends ACivMod {
         return instance;
     }
 
-    public void loadDatabases() {
+    private void loadDatabases() {
         String host = config.getString("sql.hostname", "localhost");
         int port = config.getInt("sql.port", 3306);
         String dbname = config.getString("sql.dbname", "namelayer");
@@ -159,6 +163,30 @@ public class NameLayerPlugin extends ACivMod {
 
     }
 
+    private DataSource getNameApiDataSource() {
+        ConfigurationSection section = config.getConfigurationSection("nameapi.database");
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        HikariConfig dbConfig = new HikariConfig();
+        dbConfig.setJdbcUrl("jdbc:" + section.getString("driver", "mariadb") + "://" + section.getString("host", "localhost") + ":" +
+            section.getInt("port", 3306) + "/" + section.getString("database", "minecraft"));
+        dbConfig.setConnectionTimeout(section.getInt("connection_timeout", 10_000));
+        dbConfig.setIdleTimeout(section.getInt("idle_timeout", 600_000));
+        dbConfig.setMaxLifetime(section.getInt("max_lifetime", 7_200_000));
+        dbConfig.setMaximumPoolSize(section.getInt("poolsize", 1));
+        dbConfig.setUsername(section.getString("user", "root"));
+        String password = section.getString("password");
+        if (password != null && !password.isBlank()) {
+            dbConfig.setPassword(password);
+        }
+        return new HikariDataSource(dbConfig);
+    }
+
     /**
      * @return Returns the GroupManagerDatabase.
      */
@@ -168,16 +196,11 @@ public class NameLayerPlugin extends ACivMod {
 
     public static void log(Level level, String message) {
         if (level == Level.INFO) {
-            Bukkit.getLogger().log(level, "[NameLayer:] Info follows\n" +
-                message);
+            NameLayerPlugin.getInstance().getSLF4JLogger().info(message);
         } else if (level == Level.WARNING) {
-            Bukkit.getLogger().log(level, "[NameLayer:] Warning follows\n" +
-                message);
+            NameLayerPlugin.getInstance().getSLF4JLogger().warn(message);
         } else if (level == Level.SEVERE) {
-            Bukkit.getLogger()
-                .log(level, "[NameLayer:] Stack Trace follows\n --------------------------------------\n" +
-                    message +
-                    "\n --------------------------------------");
+            NameLayerPlugin.getInstance().getSLF4JLogger().error(message);
         }
     }
 

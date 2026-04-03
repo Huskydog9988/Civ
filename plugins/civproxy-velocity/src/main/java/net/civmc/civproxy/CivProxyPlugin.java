@@ -8,12 +8,12 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.sql.DataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import net.civmc.civproxy.renamer.PlayerRenamer;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -28,7 +28,6 @@ public class CivProxyPlugin {
     private CommentedConfigurationNode config;
 
     private DataSource source;
-
     @Inject
     public CivProxyPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = server;
@@ -43,20 +42,23 @@ public class CivProxyPlugin {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        loadConnection();
+        loadNameApiConfig();
         new PlayerCount(this, server).start();
         new PlayerRenamer(this, server, source).start();
-        new QueueListener(this, server).start();
+        if (server.getPluginManager().isLoaded("ajqueue")) {
+            new QueueListener(this, server).start();
+        }
     }
 
-    private void loadConnection() {
-        CommentedConfigurationNode database = config.node("database");
-
+    private void loadNameApiConfig() {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        CommentedConfigurationNode database = config.node("database");
+
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:" + database.node("driver").getString("mariadb") + "://" + database.node("host").getString("localhost") + ":" +
             database.node("port").getInt(3306) + "/" + database.node("database").getString("minecraft"));

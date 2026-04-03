@@ -17,7 +17,7 @@ import vg.civcraft.mc.citadel.model.AcidManager;
 import vg.civcraft.mc.citadel.model.Reinforcement;
 import vg.civcraft.mc.citadel.reinforcementtypes.ReinforcementType;
 import vg.civcraft.mc.civmodcore.inventory.items.ItemMap;
-import vg.civcraft.mc.namelayer.NameAPI;
+import vg.civcraft.mc.namelayer.NameLayerAPI;
 import vg.civcraft.mc.namelayer.group.Group;
 
 /**
@@ -128,12 +128,6 @@ public class CitadelUtility {
         return component;
     }
 
-    public static void debugLog(String msg) {
-        if (Citadel.getInstance().getConfigManager().isDebugEnabled()) {
-            Citadel.getInstance().getLogger().info(msg);
-        }
-    }
-
     public static boolean consumeReinforcementItems(Player player, ReinforcementType type, boolean consumeExtra) {
         ItemMap toRemove = new ItemMap(type.getItem());
         if (consumeExtra) {
@@ -159,7 +153,7 @@ public class CitadelUtility {
             return true;
         }
         // check if player still has permission
-        if (!NameAPI.getGroupManager().hasAccess(group, player.getUniqueId(),
+        if (!NameLayerAPI.getGroupManager().hasAccess(group, player.getUniqueId(),
             CitadelPermissionHandler.getReinforce())) {
             CitadelUtility.sendAndLog(player, ChatColor.RED,
                 "You seem to have lost permission to reinforce on " + group.getName(),

@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
     waterfall:
-        image: itzg/mc-proxy:java24
+        image: itzg/mc-proxy:java25
         restart: unless-stopped
         tty: true
         stdin_open: true
@@ -24,8 +24,8 @@ services:
               protocol: udp
               mode: host
         environment:
-            TYPE: 'CUSTOM'
-            BUNGEE_JAR_FILE: 'velocity.jar'
+            VELOCITY_VERSION: '3.4.0-SNAPSHOT'
+            TYPE: 'VELOCITY'
 
             REPLACE_ENV_VARIABLES: 'true'
             REPLACE_ENV_VARIABLE_PREFIX: 'CIV'
@@ -60,7 +60,7 @@ services:
             - /opt/PrivateConfig/proxy/config/nuvotifier/rsa/private.key:/config/plugins/nuvotifier/rsa/private.key
 
     paper:
-        image: itzg/minecraft-server:stable-java24-graalvm
+        image: itzg/minecraft-server:stable-java25
         restart: unless-stopped
         tty: true
         stdin_open: true
@@ -74,9 +74,9 @@ services:
               mode: host
         environment:
             TYPE: 'paper'
-            VERSION: '1.21.8'
+            VERSION: '1.21.11'
             EULA: 'TRUE'
-            PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.8/builds/113/downloads/leaf-1.21.8-113.jar'
+            PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.11/builds/62/downloads/leaf-1.21.11-62.jar'
 
             REMOVE_OLD_MODS: 'TRUE'
             COPY_CONFIG_DEST: '/data'
@@ -87,9 +87,9 @@ services:
             INIT_MEMORY: '{{setting.minecraft.resources.memory}}'
             MAX_MEMORY: '{{setting.minecraft.resources.memory}}'
             USE_MEOWICE_FLAGS: 'TRUE'
-            USE_MEOWICE_GRAALVM_FLAGS: 'TRUE'
             STOP_DURATION: 3600
 
+            CIV_SECUREBOOT_ENABLE: 'true'
             CIV_SERVER_NAME: prod-server
 {% if setting.minecraft.whitelist %}
             ENABLE_WHITELIST: 'true'
@@ -119,7 +119,7 @@ services:
             CIV_WATCHDOG_TIMEOUT_TIME: 60
             CIV_FORWARDING_SECRET: '{{secret.minecraft.forwarding_secret}}'
 
-            JVM_OPTS: -agentpath:./libti.so
+            JVM_OPTS: '-agentpath:./libti.so'
         volumes:
             # Persistence
             - /opt/stacks/minecraft/paper-data:/data
@@ -128,7 +128,8 @@ services:
             - /opt/stacks/minecraft/paper-plugins:/plugins
             # Private Config & Plugins
             - /opt/PrivateConfig/paper/plugins/Vulcan.jar:/config/plugins/Vulcan.jar
-            - /opt/PrivateConfig/paper/plugins/packetevents-spigot-2.9.4.jar:/config/plugins/packetevents-spgiot-2.9.4.jar
+            - /opt/PrivateConfig/paper/plugins/NM.jar:/config/plugins/NM.jar
+            - /opt/PrivateConfig/paper/config/NM/config.yml:/config/plugins/NM/config.yml
             - /opt/PrivateConfig/paper/config/Vulcan/config.yml:/config/plugins/Vulcan/config.yml
             - /opt/PrivateConfig/paper/config/HiddenOre/config.yml:/config/plugins/HiddenOre/config.yml
             - /opt/PrivateConfig/paper/config/KiraBukkitGateway/config.yml:/config/plugins/KiraBukkitGateway/config.yml
@@ -139,7 +140,6 @@ services:
             - /opt/PrivateConfig/paper/config/Terra/packs/CivMC:/config/plugins/Terra/packs/CivMC
             - /opt/PrivateConfig/paper/config/DiscordSRV/config.yml:/config/plugins/DiscordSRV/config.yml
             - /opt/PrivateConfig/paper/config/DiscordSRV/alerts.yml:/config/plugins/DiscordSRV/alerts.yml
-            - /opt/PrivateConfig/paper/config/MythicMobs:/config/plugins/MythicMobs
             - /opt/PrivateConfig/paper/config/EvenMoreFish/baits:/config/plugins/EvenMoreFish/baits
             - /opt/PrivateConfig/paper/config/EvenMoreFish/rods:/config/plugins/EvenMoreFish/rods
             - /opt/PrivateConfig/paper/config/EvenMoreFish/rarities:/config/plugins/EvenMoreFish/rarities
@@ -157,7 +157,7 @@ services:
                     memory: '{{setting.minecraft.resources.memory_limit}}'
 
     gamma:
-        image: itzg/minecraft-server:stable-java24-graalvm
+        image: itzg/minecraft-server:stable-java25
         restart: unless-stopped
         tty: true
         stdin_open: true
@@ -175,9 +175,9 @@ services:
               mode: host
         environment:
             TYPE: 'paper'
-            VERSION: '1.21.8'
+            VERSION: '1.21.11'
             EULA: 'TRUE'
-            PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.8/builds/113/downloads/leaf-1.21.8-113.jar'
+            PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.11/builds/62/downloads/leaf-1.21.11-62.jar'
 
             REMOVE_OLD_MODS: 'TRUE'
             COPY_CONFIG_DEST: '/data'
@@ -188,9 +188,9 @@ services:
             INIT_MEMORY: '{{setting.minecraft.resources.gamma_memory}}'
             MAX_MEMORY: '{{setting.minecraft.resources.gamma_memory}}'
             USE_MEOWICE_FLAGS: 'TRUE'
-            USE_MEOWICE_GRAALVM_FLAGS: 'TRUE'
             STOP_DURATION: 3600
 
+            CIV_SECUREBOOT_ENABLE: 'true'
             CIV_SERVER_NAME: prod-server
 {% if setting.minecraft.gamma_whitelist %}
             ENABLE_WHITELIST: 'true'
@@ -221,7 +221,7 @@ services:
             CIV_WATCHDOG_TIMEOUT_TIME: 60
             CIV_FORWARDING_SECRET: '{{secret.minecraft.forwarding_secret}}'
 
-            JVM_OPTS: -agentpath:./libti.so
+            JVM_OPTS: '-agentpath:./libti.so'
         volumes:
             # Persistence
             - /opt/stacks/minecraft/gamma-data:/data
@@ -234,14 +234,17 @@ services:
             - /opt/PrivateConfig/gamma/config/Heliodor/config.yml:/config/plugins/Heliodor/config.yml
             - /opt/PrivateConfig/gamma/config/HiddenOre/config.yml:/config/plugins/HiddenOre/config.yml
             - /opt/PrivateConfig/paper/plugins/Vulcan.jar:/config/plugins/Vulcan.jar
-            - /opt/PrivateConfig/paper/plugins/packetevents-spigot-2.9.4.jar:/config/plugins/packetevents-spgiot-2.9.4.jar
             - /opt/PrivateConfig/paper/config/Vulcan/config.yml:/config/plugins/Vulcan/config.yml
             - /opt/PrivateConfig/gamma/config/BreweryX/config.yml:/config/plugins/BreweryX/config.yml
             - /opt/PrivateConfig/gamma/config/BreweryX/cauldron.yml:/config/plugins/BreweryX/cauldron.yml
             - /opt/PrivateConfig/gamma/config/BreweryX/custom-items.yml:/config/plugins/BreweryX/custom-items.yml
             - /opt/PrivateConfig/gamma/config/BreweryX/recipes.yml:/config/plugins/BreweryX/recipes.yml
             - /opt/PrivateConfig/paper/config/CivChat2/banned-words.txt:/config/plugins/CivChat2/banned-words.txt
-
+            - /opt/PrivateConfig/paper/config/EvenMoreFish/baits:/config/plugins/EvenMoreFish/baits
+            - /opt/PrivateConfig/paper/config/EvenMoreFish/rods:/config/plugins/EvenMoreFish/rods
+            - /opt/PrivateConfig/paper/config/EvenMoreFish/rarities:/config/plugins/EvenMoreFish/rarities
+            - /opt/PrivateConfig/paper/config/EvenMoreFish/competitions:/config/plugins/EvenMoreFish/competitions
+            - /opt/PrivateConfig/paper/config/EvenMoreFish/config.yml:/config/plugins/EvenMoreFish/config.yml
         deploy:
             placement:
                 constraints: [node.role == manager]
@@ -250,7 +253,7 @@ services:
                     memory: '{{setting.minecraft.resources.gamma_memory_limit}}'
 
     pvp:
-        image: itzg/minecraft-server:stable-java24-graalvm
+        image: itzg/minecraft-server:stable-java25
         restart: unless-stopped
         tty: true
         stdin_open: true
@@ -264,7 +267,7 @@ services:
               mode: host
         environment:
             TYPE: 'paper'
-            VERSION: '1.21.8'
+            VERSION: '1.21.11'
             EULA: 'TRUE'
             PAPER_CUSTOM_JAR: 'asp-server.jar'
 
@@ -277,7 +280,6 @@ services:
             INIT_MEMORY: '{{setting.minecraft.resources.pvp_memory}}'
             MAX_MEMORY: '{{setting.minecraft.resources.pvp_memory}}'
             USE_MEOWICE_FLAGS: 'TRUE'
-            USE_MEOWICE_GRAALVM_FLAGS: 'TRUE'
             STOP_DURATION: 3600
 
             CIV_SERVER_NAME: prod-server
@@ -316,7 +318,6 @@ services:
             - /opt/stacks/minecraft/pvp-plugins:/plugins
             # Private Config & Plugins
             - /opt/PrivateConfig/paper/plugins/Vulcan.jar:/config/plugins/Vulcan.jar
-            - /opt/PrivateConfig/paper/plugins/packetevents-spigot-2.9.4.jar:/config/plugins/packetevents-spgiot-2.9.4.jar
             - /opt/PrivateConfig/paper/config/Vulcan/config.yml:/config/plugins/Vulcan/config.yml
             - /opt/PrivateConfig/paper/config/BreweryX/config.yml:/config/plugins/BreweryX/config.yml
             - /opt/PrivateConfig/paper/config/BreweryX/cauldron.yml:/config/plugins/BreweryX/cauldron.yml

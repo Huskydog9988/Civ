@@ -21,6 +21,7 @@ import com.untamedears.jukealert.model.actions.impl.LoginAction;
 import com.untamedears.jukealert.model.actions.impl.LogoutAction;
 import com.untamedears.jukealert.model.actions.impl.MountEntityAction;
 import com.untamedears.jukealert.model.actions.impl.OpenContainerAction;
+import com.untamedears.jukealert.model.actions.impl.PlaceVehicleAction;
 import com.untamedears.jukealert.util.JukeAlertPermissionHandler;
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,6 +61,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -75,7 +77,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
-import vg.civcraft.mc.namelayer.NameAPI;
+import vg.civcraft.mc.namelayer.NameLayerAPI;
 
 public class LoggableActionListener implements Listener {
 
@@ -177,6 +179,20 @@ public class LoggableActionListener implements Listener {
 
         handlePlayerAction(player, s -> new DestroyVehicleAction(System.currentTimeMillis(), s,
             player.getUniqueId(), event.getVehicle().getLocation(), getEntityName(event.getVehicle())));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlaceVehicle(EntityPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Vehicle vehicle) || vehicle.getSpawnCategory() != SpawnCategory.MISC) {
+            return;
+        }
+        handlePlayerAction(player, s -> new PlaceVehicleAction(System.currentTimeMillis(), s,
+            player.getUniqueId(), entity.getLocation(), getVehiclePlaceName(entity)));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -322,7 +338,7 @@ public class LoggableActionListener implements Listener {
         if (isPlayerSnitchImmune(player)) {
             return;
         }
-        if (!player.getMetadata("NPC").isEmpty() || NameAPI.getCurrentName(player.getUniqueId()) == null) {
+        if (!player.getMetadata("NPC").isEmpty() || NameLayerAPI.getCurrentName(player.getUniqueId()) == null) {
             //CombatTagPlus
             return;
         }
@@ -358,6 +374,14 @@ public class LoggableActionListener implements Listener {
             return boat.getBoatMaterial().name();
         } else {
             return vehicle.getType().toString();
+        }
+    }
+
+    private String getVehiclePlaceName(Entity entity) {
+        if (entity instanceof Boat boat) {
+            return boat.getBoatMaterial().name();
+        } else {
+            return entity.getType().toString();
         }
     }
 

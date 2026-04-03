@@ -119,6 +119,7 @@ hacks:
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Visit the community wiki at civwiki.org","color":"green","clickEvent":{"action":"open_url","value":"https://civwiki.org/wiki/Main_Page"}}]'
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Visit our wiki at civmc.net","color":"green","clickEvent":{"action":"open_url","value":"https://civmc.net/"}}]'
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Check out the player made map at map.civinfo.net","color":"green","clickEvent":{"action":"open_url","value":"https://map.civinfo.net/"}}]'
+      - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Check out the player made map at civmap.com","color":"green","clickEvent":{"action":"open_url","value":"https://civmap.com/"}}]'
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Type /global to talk in global chat","color":"green"}]'
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Type /vote to vote for CivMC and receive essence!","color":"green"}]'
       - '["",{"text":"[CivMC] ","color":"gold"},{"text":"Consider donating to the server at patreon.com/civ_mc! And get some unique perks!","color":"blue","clickEvent":{"action":"open_url","value":"https://www.patreon.com/civ_mc"}}]'
@@ -339,6 +340,14 @@ hacks:
     minDepthToMatch: 2
     watchedMaterials:
       - CHEST
+      - TRAPPED_CHEST
+      - COPPER_CHEST
+      - EXPOSED_COPPER_CHEST
+      - OXIDIZED_COPPER_CHEST
+      - WEATHERED_COPPER_CHEST
+      - WAXED_COPPER_CHEST
+      - WAXED_EXPOSED_COPPER_CHEST
+      - WAXED_OXIDIZED_COPPER_CHEST
       - FURNACE
       - JUKEBOX
       - NOTE_BLOCK
@@ -617,4 +626,12 @@ hacks:
   PlayerCount:
     enabled: true
   Trowel:
+    enabled: true
+  MobCulling:
+    enabled: true
+    turtleAllowance: 200
+    turtleMaxAge: 360000
+    striderAllowance: 200
+    striderMaxAge: 360000
+  NetheriteCrafting:
     enabled: true

@@ -34,7 +34,7 @@ import vg.civcraft.mc.civmodcore.chat.ChatUtils;
 import vg.civcraft.mc.civmodcore.players.settings.impl.LongSetting;
 import vg.civcraft.mc.civmodcore.utilities.TextUtil;
 import vg.civcraft.mc.namelayer.GroupManager;
-import vg.civcraft.mc.namelayer.NameAPI;
+import vg.civcraft.mc.namelayer.NameLayerAPI;
 import vg.civcraft.mc.namelayer.group.Group;
 import vg.civcraft.mc.namelayer.permission.PermissionType;
 
@@ -62,11 +62,11 @@ public class CivChat2Manager {
 
     private ScoreboardHUD scoreboardHUD;
 
-    protected static final GroupManager GM = NameAPI.getGroupManager();
+    protected static final GroupManager GM = NameLayerAPI.getGroupManager();
 
     private String defaultColor;
 
-    private static Map<UUID, String> customNames = new HashMap<>();
+    private static Map<UUID, Component> customNames = new HashMap<>();
 
     private final ServerBroadcaster broadcaster;
 
@@ -278,7 +278,7 @@ public class CivChat2Manager {
     private Component getCustomName(Player sender) {
         return Component.empty()
             .append(Component.text(starManager.getPrefix(sender)))
-            .append(Component.text(customNames.containsKey(sender.getUniqueId()) ? customNames.get(sender.getUniqueId()) : sender.getDisplayName()))
+            .append(customNames.containsKey(sender.getUniqueId()) ? customNames.get(sender.getUniqueId()) : Component.text(sender.getDisplayName()))
             .hoverEvent(starManager.hover(sender));
     }
 
@@ -503,17 +503,11 @@ public class CivChat2Manager {
         for (UUID uuid : membersUUID) {
             // Only add online players to members
             Player toAdd = Bukkit.getPlayer(uuid);
-            if (toAdd != null && toAdd.isOnline() && NameAPI.getGroupManager().hasAccess(group, toAdd.getUniqueId(),
+            if (toAdd != null && toAdd.isOnline() && NameLayerAPI.getGroupManager().hasAccess(group, toAdd.getUniqueId(),
                 PermissionType.getPermission("READ_CHAT"))) {
                 members.add(toAdd);
             }
         }
-
-
-        Component compMessage = Component.text("[" + group.getName() + "] ", NamedTextColor.GRAY)
-            .append(senderName)
-            .append(Component.text(": ", NamedTextColor.GRAY))
-            .append(Component.empty().color(NamedTextColor.WHITE).append(message));
 
         for (Player receiver : members) {
             if (DBM.isIgnoringGroup(receiver.getUniqueId(), group.getName())) {
@@ -522,13 +516,26 @@ public class CivChat2Manager {
             if (DBM.isIgnoringPlayer(receiver.getUniqueId(), senderId)) {
                 continue;
             }
+
+            TextColor color =
+                CivChat2.getInstance().getCivChat2SettingsManager()
+                    .showGroupColors(receiver.getUniqueId())
+                    ? group.getGroupColor() : NamedTextColor.GRAY;
+
+            Component compMessage = Component.text("[", NamedTextColor.GRAY)
+                .append(Component.text(group.getName(), color))
+                .append(Component.text("] ", NamedTextColor.GRAY))
+                .append(senderName)
+                .append(Component.text(": ", NamedTextColor.GRAY))
+                .append(Component.empty().color(NamedTextColor.WHITE).append(message));
+
             receiver.sendMessage(compMessage);
         }
 
         Set<String> players = new HashSet<>();
         for (Player player : members) {
             if (!senderId.equals(player.getUniqueId())) {
-                players.add(NameAPI.getCurrentName(player.getUniqueId()));
+                players.add(NameLayerAPI.getCurrentName(player.getUniqueId()));
             }
         }
         return players;
@@ -570,7 +577,7 @@ public class CivChat2Manager {
         return String.format(ChatUtils.parseColor(text), args);
     }
 
-    public void setCustomName(UUID player, String name) {
+    public void setCustomName(UUID player, Component name) {
         customNames.put(player, name);
     }
 

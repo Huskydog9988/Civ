@@ -7,9 +7,9 @@ import isaac.bastion.Permissions;
 import isaac.bastion.utils.BastionSettingManager;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +27,7 @@ import vg.civcraft.mc.civmodcore.players.scoreboard.side.ScoreBoardAPI;
 import vg.civcraft.mc.civmodcore.players.settings.PlayerSetting;
 import vg.civcraft.mc.civmodcore.players.settings.SettingChangeListener;
 import vg.civcraft.mc.civmodcore.players.settings.impl.DisplayLocationSetting;
-import vg.civcraft.mc.namelayer.NameAPI;
+import vg.civcraft.mc.namelayer.NameLayerAPI;
 import vg.civcraft.mc.namelayer.permission.PermissionType;
 
 public class ModeListener implements Listener {
@@ -107,10 +107,10 @@ public class ModeListener implements Listener {
             }
             return;
         }
-        Set<BastionType> alliedBastions = new HashSet<>();
-        Set<BastionType> enemyBastions = new HashSet<>();
+        Set<BastionType> alliedBastions = new TreeSet<>();
+        Set<BastionType> enemyBastions = new TreeSet<>();
         for (BastionBlock bastion : bastionBlocks) {
-            if (NameAPI.getGroupManager().hasAccess(bastion.getGroup(), player.getUniqueId(), placePerm)) {
+            if (NameLayerAPI.getGroupManager().hasAccess(bastion.getGroup(), player.getUniqueId(), placePerm)) {
                 alliedBastions.add(bastion.getType());
             } else {
                 enemyBastions.add(bastion.getType());
@@ -128,7 +128,7 @@ public class ModeListener implements Listener {
                 String.format("%sAlly Bastion [%s]", ChatColor.GREEN, buildBastionTypeList(alliedBastions)));
             return;
         }
-        updateDisplaySetting(player, String.format("%s%sEnemy Bastion [%s]", ChatColor.RED, ChatColor.BOLD,
+        updateDisplaySetting(player, String.format("%s%sHostile Bastion [%s]", ChatColor.RED, ChatColor.BOLD,
             buildBastionTypeList(enemyBastions)));
     }
 

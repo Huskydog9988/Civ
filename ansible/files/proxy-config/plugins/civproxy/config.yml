@@ -4,7 +4,7 @@ database:
   host: ${CIV_MYSQL_HOST}
   port: 3306
   database: civproxy
-  poolsize: 10
+  poolsize: 5
   connection_timeout: 10000
   idle_timeout: 600000
   max_lifetime: 7200000

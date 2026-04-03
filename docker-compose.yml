@@ -8,8 +8,8 @@ services:
   #################
 
   proxy:
-    image: itzg/mc-proxy:java24
-    restart: unless-stopped
+    image: itzg/mc-proxy:java25
+    restart: on-failure
     tty: true
     stdin_open: true
     depends_on:
@@ -20,8 +20,8 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      TYPE: 'CUSTOM'
-      BUNGEE_JAR_FILE: 'velocity.jar'
+      VELOCITY_VERSION: '3.4.0-SNAPSHOT'
+      TYPE: 'VELOCITY'
 
       REMOVE_OLD_MODS: 'TRUE'
       SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
@@ -54,8 +54,8 @@ services:
       - ./ansible/build/proxy-plugins:/plugins
 
   paper:
-    image: itzg/minecraft-server:stable-java24-graalvm
-    restart: unless-stopped
+    image: itzg/minecraft-server:stable-java25
+    restart: on-failure
     tty: true
     stdin_open: true
     depends_on:
@@ -67,9 +67,9 @@ services:
         condition: service_healthy
     environment:
       TYPE: 'paper'
-      VERSION: '1.21.8'
+      VERSION: '1.21.11'
       EULA: 'TRUE'
-      PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.8/builds/113/downloads/leaf-1.21.8-113.jar'
+      PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.11/builds/62/downloads/leaf-1.21.11-62.jar'
 
       REMOVE_OLD_MODS: 'TRUE'
       COPY_CONFIG_DEST: '/data'
@@ -99,6 +99,8 @@ services:
       CIV_RABBITMQ_USERNAME: rabbitmq
       CIV_RABBITMQ_PASSWORD: rabbitmq
 
+      CIV_SECUREBOOT_ENABLE: 'false'
+
       JVM_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       CIV_WATCHDOG_TIMEOUT_TIME: 6000
       CIV_FORWARDING_SECRET: '1234'
@@ -110,8 +112,8 @@ services:
       - ./ansible/build/paper-plugins:/plugins
 
   gamma:
-    image: itzg/minecraft-server:stable-java24-graalvm
-    restart: unless-stopped
+    image: itzg/minecraft-server:stable-java25
+    restart: on-failure
     tty: true
     stdin_open: true
     depends_on:
@@ -123,9 +125,9 @@ services:
         condition: service_healthy
     environment:
       TYPE: 'paper'
-      VERSION: '1.21.8'
+      VERSION: '1.21.11'
       EULA: 'TRUE'
-      PAPER_CUSTOM_JAR: 'civpaper.jar'
+      PAPER_DOWNLOAD_URL: 'https://api.leafmc.one/v2/projects/leaf/versions/1.21.11/builds/62/downloads/leaf-1.21.11-62.jar'
 
       REMOVE_OLD_MODS: 'TRUE'
       COPY_CONFIG_DEST: '/data'
@@ -136,6 +138,7 @@ services:
       INIT_MEMORY: 1G
       MAX_MEMORY: 3G
 
+      CIV_SECUREBOOT_ENABLE: 'false'
       CIV_SERVER_NAME: local
 
       CIV_WORDBANK_SEED: wordbank
@@ -165,8 +168,8 @@ services:
       - ./ansible/build/gamma-plugins:/plugins
 
   pvp:
-    image: itzg/minecraft-server:stable-java24-graalvm
-    restart: unless-stopped
+    image: itzg/minecraft-server:stable-java25
+    restart: on-failure
     tty: true
     stdin_open: true
     depends_on:
@@ -178,7 +181,7 @@ services:
         condition: service_healthy
     environment:
       TYPE: 'paper'
-      VERSION: '1.21.8'
+      VERSION: '1.21.11'
       EULA: 'TRUE'
       PAPER_CUSTOM_JAR: 'asp-server.jar'
 
@@ -226,7 +229,7 @@ services:
 
   mariadb:
     image: mariadb:10.7.1
-    restart: unless-stopped
+    restart: on-failure
     command: --max-connections 500
     healthcheck:
       test: [ "CMD-SHELL", 'mysqladmin ping --user "$$MYSQL_USER" --password="$$MYSQL_PASSWORD"' ]
@@ -247,7 +250,7 @@ services:
 
   postgres:
     image: timescale/timescaledb:latest-pg14
-    restart: unless-stopped
+    restart: on-failure
     healthcheck:
       test: [ "CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER"' ]
       interval: 10s
@@ -267,7 +270,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.9.16-management
-    restart: unless-stopped
+    restart: on-failure
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 60s
@@ -288,7 +291,7 @@ services:
 
   grafana:
     image: grafana/grafana-oss:latest
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
       postgres:
         condition: service_healthy
