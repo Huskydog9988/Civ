@@ -1,6 +1,6 @@
 package vg.civcraft.mc.civmodcore.inventory.items.updater.migrations;
 
-import net.minecraft.core.component.DataComponentHolder;
+import io.papermc.paper.datacomponent.DataComponentHolder;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,7 +12,6 @@ public sealed interface ItemMigration<T> {
         @NotNull T item
     );
 
-    // TODO: Switch this to PaperMC DataComponentHolder on 1.21.5
     non-sealed interface OfData extends ItemMigration<DataComponentHolder> {
 
     }
@@ -50,7 +49,7 @@ public sealed interface ItemMigration<T> {
         final @NotNull ItemMigration<?> migration
     ) {
         switch (migration) {
-            case final ItemMigration.OfData dataMigration -> dataMigration.doMigration(CraftItemStack.unwrap(item));
+            case final ItemMigration.OfData dataMigration -> dataMigration.doMigration(item);
             case final ItemMigration.OfMeta metaMigration -> item.editMeta(metaMigration::doMigration);
             case final ItemMigration.OfItem itemMigration -> itemMigration.doMigration(item);
             case final ItemMigration.OfNms nmsMigration -> nmsMigration.doMigration(CraftItemStack.unwrap(item));
