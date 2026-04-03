@@ -3,7 +3,7 @@ package vg.civcraft.mc.civmodcore.inventory.items.updater.listeners;
 import org.jetbrains.annotations.NotNull;
 import vg.civcraft.mc.civmodcore.inventory.items.updater.ItemUpdater;
 
-public interface DefaultItemUpdaterListeners extends UpdatePlayerItemsOnJoin, UpdateInventoryItemsOnOpen, UpdateItemOnCommand {
+public interface DefaultItemUpdaterListeners extends UpdatePlayerItemsOnJoin, UpdateInventoryItemsOnOpen {
     /**
      * Pass your {@link vg.civcraft.mc.civmodcore.inventory.items.updater.ItemUpdater} implementation into this method
      * and pass the result into {@link vg.civcraft.mc.civmodcore.ACivMod#registerListener(org.bukkit.event.Listener)}
