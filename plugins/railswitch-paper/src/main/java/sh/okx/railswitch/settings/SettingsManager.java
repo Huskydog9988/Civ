@@ -51,6 +51,14 @@ public final class SettingsManager {
         destScoreBoard = ScoreBoardAPI.createBoard("RailSwitchDestDisplay");
         destBottomLine = BottomLineAPI.createBottomLine("RailSwitchDestDisplay", 4);
 
+        // update player ui if dest setting is changed
+        destSetting.registerListener((UUID uuid, PlayerSetting<String> setting, String oldValue, String newValue) -> {
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null) {
+                updateDestScoreboardHud(player);
+            }
+        });
+
         // update player ui if scoreboard display location setting is changed
         destDisplayLocation.registerListener((UUID uuid, PlayerSetting<String> setting, String oldValue, String newValue) -> {
             Player player = plugin.getServer().getPlayer(uuid);

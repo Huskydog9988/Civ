@@ -24,12 +24,4 @@ public final class DestinationSetting extends StringSetting {
         }
         return value;
     }
-
-    @Override
-    public void setValue(Player player , String value) {
-        super.setValue(player, value);
-        // tell the scoreboard to update with the new value
-        SettingsManager.updateDestScoreboardHud(player);
-    }
-
 }
