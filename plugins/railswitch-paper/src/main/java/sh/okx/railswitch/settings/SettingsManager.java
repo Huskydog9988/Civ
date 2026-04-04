@@ -2,6 +2,7 @@ package sh.okx.railswitch.settings;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,7 +14,6 @@ import vg.civcraft.mc.civmodcore.players.scoreboard.side.CivScoreBoard;
 import vg.civcraft.mc.civmodcore.players.scoreboard.side.ScoreBoardAPI;
 import vg.civcraft.mc.civmodcore.players.settings.PlayerSetting;
 import vg.civcraft.mc.civmodcore.players.settings.impl.DisplayLocationSetting;
-import java.util.UUID;
 
 /**
  * Manages the initialisation and registration of menu settings.
@@ -42,6 +42,7 @@ public final class SettingsManager {
         resetSetting = new ResetSetting(plugin, destSetting);
         destDisplayLocation = new DisplayLocationSetting(plugin, DisplayLocationSetting.DisplayLocation.SIDEBAR,
             "Dest Display Location", "destDisplayLocation", new ItemStack(Material.ARROW), "destination");
+
         // Register those elements
         menu.registerToParentMenu();
         menu.registerSetting(destSetting);
