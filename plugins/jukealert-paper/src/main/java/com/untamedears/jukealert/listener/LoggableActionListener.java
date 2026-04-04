@@ -283,7 +283,7 @@ public class LoggableActionListener implements Listener {
             location, material));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Set<Snitch> covering = new HashSet<>(snitchManager.getSnitchesCovering(event.getPlayer().getLocation()));
@@ -291,7 +291,7 @@ public class LoggableActionListener implements Listener {
         insideFields.put(event.getPlayer().getUniqueId(), covering);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void playerQuitEvent(PlayerQuitEvent event) {
         handleSnitchLogout(event.getPlayer());
     }
