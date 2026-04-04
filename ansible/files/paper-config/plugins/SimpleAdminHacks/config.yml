@@ -635,3 +635,5 @@ hacks:
     striderMaxAge: 360000
   NetheriteCrafting:
     enabled: true
+  NameLocker:
+    enabled: true
