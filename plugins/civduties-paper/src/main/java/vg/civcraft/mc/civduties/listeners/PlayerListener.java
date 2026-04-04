@@ -2,6 +2,7 @@ package vg.civcraft.mc.civduties.listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +35,7 @@ public class PlayerListener implements Listener {
         this.vaultManager = CivDuties.getInstance().getVaultManager();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void playerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (modeManager.isInDuty(player)) {
@@ -62,8 +63,8 @@ public class PlayerListener implements Listener {
             vaultManager.addPermissionsToPlayer(player, tier.getTemporaryPermissions());
             vaultManager.addPlayerToGroups(player, tier.getTemporaryGroups());
             Bukkit.getScheduler().scheduleSyncDelayedTask(CivDuties.getInstance(), () -> {
-                player.sendMessage(Component.text("You are in duty mode", NamedTextColor.GREEN));
-            }, 5L);
+                player.sendMessage(Component.text("You are in duty mode.", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD));
+            }, 10L);
         }
     }
 
