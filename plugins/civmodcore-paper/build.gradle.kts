@@ -11,7 +11,7 @@ dependencies {
         paperDevBundle(libs.versions.paper)
     }
 
-    api("com.github.davidmoten:rtree2:0.9.3")
+    api(libs.rtree2)
     api(libs.aikar.acf)
     api(libs.aikar.taskchain)
     api(libs.hikaricp)
