@@ -107,7 +107,8 @@ public class ActivityMap {
             try {
                 saveChangesToDB();
             } catch (RuntimeException ex) {
-                logger.log(Level.SEVERE, "Saving changes to db", ex);
+                logger.log(Level.SEVERE, "Saving changes to db");
+                ex.printStackTrace();
             }
         }, SAVE_CHANGES_INTERVAL_MS, SAVE_CHANGES_INTERVAL_MS, TimeUnit.MILLISECONDS);
 
@@ -115,7 +116,8 @@ public class ActivityMap {
             try {
                 unloadChunkTask();
             } catch (RuntimeException ex) {
-                logger.log(Level.SEVERE, "Unlocking chunks", ex);
+                logger.log(Level.SEVERE, "Unlocking chunks");
+                ex.printStackTrace();
             }
         }, UNLOAD_INTERVAL_MS, UNLOAD_INTERVAL_MS, TimeUnit.MILLISECONDS);
 
