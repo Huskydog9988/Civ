@@ -21,6 +21,7 @@ public final class RailSwitchPlugin extends ACivMod implements Listener {
         SettingsManager.init(this);
         registerListener(new CitadelGlue(this));
         registerListener(new SwitchListener());
+        registerListener(new DestSignListener());
         commandManager = new CommandManager(this);
         commandManager.init();
         commandManager.registerCommand(new DestinationCommand());
