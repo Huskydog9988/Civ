@@ -14,6 +14,6 @@ dependencies {
     compileOnly(project(":plugins:namelayer-paper"))
     compileOnly(project(":plugins:citadel-paper"))
     compileOnly(project(":plugins:combattagplus-paper"))
-    compileOnly("io.lumine:Mythic-Dist:5.6.1")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+    compileOnly(libs.mythic.dist)
+    compileOnly(libs.packetevents.spigot)
 }

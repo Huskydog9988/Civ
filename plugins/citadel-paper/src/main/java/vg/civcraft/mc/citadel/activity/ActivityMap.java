@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -103,11 +104,21 @@ public class ActivityMap {
         }
 
         scheduler.scheduleWithFixedDelay(() -> {
-            saveChangesToDB();
+            try {
+                saveChangesToDB();
+            } catch (RuntimeException ex) {
+                logger.log(Level.SEVERE, "Saving changes to db");
+                ex.printStackTrace();
+            }
         }, SAVE_CHANGES_INTERVAL_MS, SAVE_CHANGES_INTERVAL_MS, TimeUnit.MILLISECONDS);
 
         scheduler.scheduleWithFixedDelay(() -> {
-            unloadChunkTask();
+            try {
+                unloadChunkTask();
+            } catch (RuntimeException ex) {
+                logger.log(Level.SEVERE, "Unlocking chunks");
+                ex.printStackTrace();
+            }
         }, UNLOAD_INTERVAL_MS, UNLOAD_INTERVAL_MS, TimeUnit.MILLISECONDS);
 
         startLoadChunkThread();

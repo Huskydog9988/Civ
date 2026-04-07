@@ -12,5 +12,5 @@ dependencies {
     compileOnly(project(":plugins:civmodcore-paper"))
     compileOnly(project(":plugins:namelayer-paper"))
 
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+    compileOnly(libs.packetevents.spigot)
 }

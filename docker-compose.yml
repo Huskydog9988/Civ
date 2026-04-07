@@ -20,7 +20,7 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      VELOCITY_VERSION: '3.4.0-SNAPSHOT'
+      VELOCITY_VERSION: '3.5.0-SNAPSHOT'
       TYPE: 'VELOCITY'
 
       REMOVE_OLD_MODS: 'TRUE'

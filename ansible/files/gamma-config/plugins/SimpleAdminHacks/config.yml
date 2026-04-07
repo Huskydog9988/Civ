@@ -628,3 +628,5 @@ hacks:
     enabled: false
   NetheriteCrafting:
     enabled: true
+  NameLocker:
+    enabled: true

@@ -16,8 +16,9 @@ dependencies {
     compileOnly(project(":plugins:banstick-paper"))
     compileOnly(project(":plugins:bastion-paper"))
     compileOnly(project(":plugins:exilepearl-paper"))
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+    compileOnly(project(":plugins:factorymod-paper"))
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.packetevents.spigot)
 
     compileOnly(libs.protocollib)
 }
