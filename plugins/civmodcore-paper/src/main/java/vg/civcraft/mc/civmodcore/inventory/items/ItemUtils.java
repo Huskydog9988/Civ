@@ -23,6 +23,33 @@ import vg.civcraft.mc.civmodcore.chat.ChatUtils;
 public final class ItemUtils {
 
     /**
+     * Checks if the item has the provided display name
+     * @param item The item to check the displau name of
+     * @param displayName The display name to check for
+     * @return Returns if the item has the specified name
+     */
+    public static boolean hasDisplayName(@NotNull ItemStack item, @NotNull String displayName) {
+       return ChatUtils.stringify(item.getItemMeta().displayName()).equals(displayName);
+    }
+
+    /**
+     * Checks if the item has the provided lore line *anywhere* in its lore
+     * @param item The item to check the lore of
+     * @param loreLine The lore line to check for
+     * @return Returns if the item has the specified lore line
+     */
+    public static boolean hasLoreLine(@NotNull ItemStack item, @NotNull String loreLine) {
+        var meta = item.getItemMeta();
+        if (meta == null) return false;
+        for (var line : Objects.requireNonNull(meta.lore())) {
+            if (ChatUtils.stringify(line).equals(loreLine)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the name of an item based off a material, e.g: POLISHED_GRANITE to Polished Granite
      *
      * @param material The material to get the name of.
@@ -217,17 +244,6 @@ public final class ItemUtils {
     @Nullable
     public static ItemMeta getItemMeta(@Nullable final ItemStack item) {
         return item == null ? null : item.getItemMeta();
-    }
-
-    /**
-     * Determines whether an item has a display name.
-     *
-     * @param item The item to check the display name of.
-     * @return Returns true if the item has a display name.
-     */
-    public static boolean hasDisplayName(@Nullable final ItemStack item) {
-        final var meta = getItemMeta(item);
-        return meta != null && meta.hasDisplayName();
     }
 
     /**

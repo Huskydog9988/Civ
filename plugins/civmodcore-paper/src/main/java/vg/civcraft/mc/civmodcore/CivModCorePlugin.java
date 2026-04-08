@@ -12,6 +12,7 @@ import vg.civcraft.mc.civmodcore.dao.DatabaseCredentials;
 import vg.civcraft.mc.civmodcore.dao.ManagedDatasource;
 import vg.civcraft.mc.civmodcore.inventory.gui.ClickableInventoryListener;
 import vg.civcraft.mc.civmodcore.inventory.items.EnchantUtils;
+import vg.civcraft.mc.civmodcore.inventory.items.custom.CustomItem;
 import vg.civcraft.mc.civmodcore.players.PlayerNames;
 import vg.civcraft.mc.civmodcore.players.scoreboard.bottom.BottomLineAPI;
 import vg.civcraft.mc.civmodcore.players.scoreboard.side.ScoreBoardAPI;
@@ -82,6 +83,9 @@ public class CivModCorePlugin extends ACivMod {
         EnchantUtils.loadEnchantAbbreviations();
         BottomLineAPI.init();
         this.skinCache = new SkinCache(this, this.config.getSkinCacheThreads());
+
+        // register tasks and listeners for custom items
+        CustomItem.init(this);
 
         if (this.config.getChunkLoadingStatistics())
             LoadStatisticManager.enable();

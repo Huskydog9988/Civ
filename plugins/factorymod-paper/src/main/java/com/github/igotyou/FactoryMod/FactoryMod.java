@@ -1,11 +1,13 @@
 package com.github.igotyou.FactoryMod;
 
 import com.github.igotyou.FactoryMod.commands.FMCommandManager;
+import com.github.igotyou.FactoryMod.customItems.Fossil;
 import com.github.igotyou.FactoryMod.listeners.CitadelListener;
 import com.github.igotyou.FactoryMod.listeners.CompactItemListener;
 import com.github.igotyou.FactoryMod.listeners.FactoryModListener;
 import com.github.igotyou.FactoryMod.utility.FactoryModPermissionManager;
 import vg.civcraft.mc.civmodcore.ACivMod;
+import vg.civcraft.mc.civmodcore.inventory.items.custom.CustomItem;
 
 public class FactoryMod extends ACivMod {
 
@@ -26,6 +28,7 @@ public class FactoryMod extends ACivMod {
         }
         commandManager = new FMCommandManager(this);
         registerListeners();
+        CustomItem.registerCustomItem(this, new Fossil());
         info("Successfully enabled");
     }
 
