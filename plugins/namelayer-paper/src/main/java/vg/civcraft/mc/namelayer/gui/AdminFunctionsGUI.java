@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +21,6 @@ import vg.civcraft.mc.civmodcore.chat.dialog.DialogManager;
 import vg.civcraft.mc.civmodcore.inventory.gui.Clickable;
 import vg.civcraft.mc.civmodcore.inventory.gui.ClickableInventory;
 import vg.civcraft.mc.civmodcore.inventory.gui.DecorationStack;
-import vg.civcraft.mc.civmodcore.inventory.gui.IClickable;
 import vg.civcraft.mc.civmodcore.inventory.gui.LClickable;
 import vg.civcraft.mc.civmodcore.inventory.items.ItemUtils;
 import vg.civcraft.mc.namelayer.NameLayerAPI;
@@ -75,12 +75,18 @@ public class AdminFunctionsGUI extends AbstractGroupGUI {
 //        ci.setSlot(mergeClick, 12);
         ItemStack colorChangeStack = new ItemStack(Material.WHITE_DYE);
         ItemUtils.setComponentDisplayName(colorChangeStack,
-            Component.text("Change group color of ", NamedTextColor.GOLD).append(g.getGroupNameColored()));
+            Component.text("Change group color of ", NamedTextColor.GOLD)
+                .append(g.getGroupNameColored())
+                .decoration(TextDecoration.ITALIC, false)
+        );
         Clickable colorChangeClick;
         if (gm.hasAccess(g, p.getUniqueId(), PermissionType.getPermission("EDIT_COLOR"))) {
             colorChangeClick = getGroupColorChangeButton();
         } else {
-            ItemUtils.setComponentLore(colorChangeStack, Component.text("You don't have permission to do this", NamedTextColor.RED));
+            ItemUtils.setComponentLore(colorChangeStack,
+                Component.text("You don't have permission to do this", NamedTextColor.RED)
+                .decoration(TextDecoration.ITALIC, false)
+            );
             colorChangeClick = new DecorationStack(colorChangeStack);
         }
         ci.setSlot(colorChangeClick, 11);
@@ -278,7 +284,10 @@ public class AdminFunctionsGUI extends AbstractGroupGUI {
 
     private LClickable getGroupColorChangeButton() {
         return new LClickable(Material.WHITE_DYE,
-            Component.text("Change group color of ", NamedTextColor.GOLD).append(g.getGroupNameColored()), p -> {
+            Component.text("Change group color of ", NamedTextColor.GOLD)
+                .append(g.getGroupNameColored())
+                .decoration(TextDecoration.ITALIC, false)
+            , p -> {
             ClickableInventory.forceCloseInventory(p);
             p.sendMessage(Component.text("Enter the color you wish to change ", NamedTextColor.GREEN).append(g.getGroupNameColored())
                 .append(Component.text(" to or type \"cancel\" to leave this prompt", NamedTextColor.GREEN)));
