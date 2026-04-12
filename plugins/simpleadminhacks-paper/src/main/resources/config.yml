@@ -89,6 +89,8 @@ hacks:
     # its stinger and thus die when successfully attacking an entity.
     # Default: 1.0 (100%)
     severStingerChance: 1.0
+  BrewIndex:
+    enabled: true
   BuffSpanker:
     enabled: true
     # The list of PotionEffectType's that you do not wish players to receive.
