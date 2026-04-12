@@ -145,10 +145,12 @@ public final class BrewIndex extends BasicHack {
             return;
         }
 
-        final List<BRecipe> sortedRecipes = new ArrayList<>(allRecipes);
-        sortedRecipes.sort(Comparator.comparing(BRecipe::getRecipeName, String.CASE_INSENSITIVE_ORDER));
-
         final Map<String, Integer> drunkBrews = getDrunkBrews(player);
+        final List<BRecipe> sortedRecipes = new ArrayList<>(allRecipes);
+        sortedRecipes.sort(Comparator
+            .comparing((BRecipe recipe) -> !drunkBrews.containsKey(recipe.getRecipeName()))
+            .thenComparing(BRecipe::getRecipeName, String.CASE_INSENSITIVE_ORDER));
+
         final int totalBrews = sortedRecipes.size();
         final int discoveredBrews = (int) sortedRecipes.stream()
             .filter(recipe -> drunkBrews.containsKey(recipe.getRecipeName()))
@@ -164,6 +166,7 @@ public final class BrewIndex extends BasicHack {
             try {
                 final Brew brew = recipe.createBrew(10);
                 displayItem = brew.createItem(recipe);
+                brew.seal(displayItem, null);
             } catch (final Exception exception) {
                 displayItem = new ItemStack(Material.POTION);
             }
@@ -175,15 +178,18 @@ public final class BrewIndex extends BasicHack {
             final List<Component> lore = new ArrayList<>();
             final ItemMeta meta = displayItem.getItemMeta();
             if (hasDrunk) {
-                lore.add(Component.text("\u2714 Discovered")
+                lore.add(Component.text("✔ Discovered")
                     .color(NamedTextColor.GREEN)
                     .decoration(TextDecoration.ITALIC, false));
-                lore.add(Component.text("\u2605 Best quality: " + bestQuality + "/10")
+                final int clamped = Math.clamp(bestQuality, 0, 10);
+                final int filledStars = clamped / 2;
+                final int unfilledStars = clamped % 2;
+                lore.add(Component.text("★".repeat(filledStars) + "☆".repeat(unfilledStars) + " Best quality")
                     .color(NamedTextColor.GOLD)
                     .decoration(TextDecoration.ITALIC, false));
                 meta.setEnchantmentGlintOverride(true);
             } else {
-                lore.add(Component.text("\u2718 Not yet discovered")
+                lore.add(Component.text("✘ Not yet discovered")
                     .color(NamedTextColor.RED)
                     .decoration(TextDecoration.ITALIC, false));
             }
