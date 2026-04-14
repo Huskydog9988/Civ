@@ -46,8 +46,11 @@ services:
       CIV_MYSQL_HOST: mariadb
       CIV_MYSQL_USERNAME: mariadb
       CIV_MYSQL_PASSWORD: mariadb
+
+      JVM_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
     ports:
       - "25565:25577"
+      - "5008:5008"
     volumes:
       - ./containers/data/proxy:/server
       - ./ansible/files/proxy-config:/config
