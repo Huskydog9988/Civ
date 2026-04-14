@@ -10,4 +10,5 @@ dependencies {
 
     api(libs.cron.utils)
     api(libs.configurate.yaml)
+    api(project(":libraries:translation-store"))
 }

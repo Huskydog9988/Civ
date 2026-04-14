@@ -1,0 +1,10 @@
+{
+    "restart": {
+        "bar": "<dark_green>Update restart in % minute$",
+        "join-message": "<gold>[CivMC] <dark_green>Server is restarting for an update in % minute$",
+        "kick": "Server is restarting for an update"
+    },
+    "scheduledAnnouncements": {
+        "test": "<gold>[CivMC] <dark_green>This is a test announcement"
+    }
+}

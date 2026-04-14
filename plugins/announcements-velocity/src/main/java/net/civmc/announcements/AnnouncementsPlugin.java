@@ -26,11 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import net.civmc.announcements.update.UpdateCommand;
 import net.civmc.announcements.update.UpdateListener;
+import net.civmc.translation.CivTranslationStore;
+import net.civmc.translation.ComponentUtils;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -72,6 +75,11 @@ public class AnnouncementsPlugin {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         startupTime = ZonedDateTime.now();
 
+        // load translations
+        CivTranslationStore store = new CivTranslationStore(logger, Key.key("civ:civannouncements"));
+        store.loadTranslations();
+        GlobalTranslator.translator().addSource(store);
+
         loadConfig();
         scheduleTasks();
 
@@ -80,14 +88,14 @@ public class AnnouncementsPlugin {
         bossBars.init();
         server.getEventManager().register(this, bossBars);
 
-        Component barMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("bar").getString());
-        Component joinMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("message").getString());
-        Component kickMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("kick").getString());
+        // Component barMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("bar").getString());
+        // Component joinMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("message").getString());
+        // Component kickMessage = MiniMessage.miniMessage().deserialize(config.node("restart").node("kick").getString());
 
-        UpdateListener listener = new UpdateListener(server, this, joinMessage, kickMessage);
+        UpdateListener listener = new UpdateListener(server, this, Component.translatable("civ.restart.join-message"), Component.translatable("civ.restart.kick"));
         server.getEventManager().register(this, listener);
         server.getCommandManager().register(server.getCommandManager().metaBuilder("update").plugin(this).build(),
-            new UpdateCommand(server, this, listener, bossBars, barMessage));
+            new UpdateCommand(server, this, listener, bossBars, Component.translatable("civ.restart.bar")));
     }
 
     private void scheduleTasks() {
@@ -97,11 +105,20 @@ public class AnnouncementsPlugin {
         List<? extends ConfigurationNode> announcements = config.node("scheduledAnnouncements").childrenList();
         for (ConfigurationNode announcement : announcements) {
             Cron cron = cronParser.parse(Objects.requireNonNull(announcement.node("cron").getString()));
+            boolean shouldTranslate = announcement.node("translate").getBoolean(false);
+
             // convert message to Component
-            Component formatedMsg = minimessageSerializer.deserialize(Objects.requireNonNull(announcement.node("message").getString()));
+            Component msg;
+            if (shouldTranslate) {
+                // get message as translation key
+                msg = Component.translatable(Objects.requireNonNull(announcement.node("message").getString()));
+            } else {
+                msg = minimessageSerializer.deserialize(Objects.requireNonNull(announcement.node("message").getString()));
+            }
+
             boolean showTitle = announcement.node("title").getBoolean(false);
             int bossBar = announcement.node("bossbar_seconds").getInt(0);
-            scheduledAnnouncements.put(cron, new Announcement(formatedMsg, showTitle, bossBar > 0 ? Duration.ofSeconds(bossBar) : null));
+            scheduledAnnouncements.put(cron, new Announcement(msg, showTitle, bossBar > 0 ? Duration.ofSeconds(bossBar) : null));
         }
     }
 
@@ -135,7 +152,7 @@ public class AnnouncementsPlugin {
                         server.sendMessage(announcement.message);
                     }
 
-                    logger.info("Announcement sent: {}", PlainTextComponentSerializer.plainText().serialize(announcement.message));
+                    logger.info("Announcement sent: {}", ComponentUtils.stringify(announcement.message));
                 }
             });
         }

@@ -14,6 +14,7 @@ plugins {
 include(":ansible")
 
 include(":libraries:name-api")
+include(":libraries:translation-store")
 
 include(":plugins:announcements-velocity")
 include(":plugins:banstick-paper")
@@ -47,3 +48,6 @@ include(":plugins:heliodor-paper")
 include(":plugins:civproxy-velocity")
 include(":plugins:secureboot-paper")
 include(":plugins:kiragateway-velocity")
+
+include("libraries:translate-store")
+include("libraries:translation-store")
