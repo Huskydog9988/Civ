@@ -67,7 +67,7 @@ public class ReinforcingState extends AbstractPlayerState {
             type = Citadel.getInstance().getReinforcementTypeManager().getByItemStack(e.getItem(), player.getWorld().getName());
         }
         Block block = ReinforcementLogic.getResponsibleBlock(e.getClickedBlock());
-        Reinforcement rein = ReinforcementLogic.getReinforcementProtecting(block);
+        Reinforcement rein = ReinforcementLogic.getReinforcementAt(block.getLocation());
         // if there is no existing reinforcement and no material to create one, nothing to do
         // if reinforcement exists, check if player has permission to edit it
         if (rein != null && !rein.hasPermission(player, CitadelPermissionHandler.getBypass())) {
