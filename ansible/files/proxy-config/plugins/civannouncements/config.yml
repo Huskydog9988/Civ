@@ -3,18 +3,22 @@
 # https://webui.advntr.dev/
 scheduledAnnouncements:
   - cron: "30 9 * * *"
-    message: "<gold>[CivMC] <green>Restart in 30 minutes"
+    message: "civ.scheduledAnnouncements.restart-30"
+    translate: true
   - cron: "45 9 * * *"
-    message: "<gold>[CivMC] <green>Restart in 15 minutes"
+    message: "civ.scheduledAnnouncements.restart-15"
+    translate: true
   - cron: "55 9 * * *"
-    message: "<gold>[CivMC] <green>Restart in 5 minutes"
+    message: "civ.scheduledAnnouncements.restart-5"
+    translate: true
   - cron: "59 9 * * *"
-    message: "<gold>[CivMC] <green>Restart in 1 minute"
+    message: "civ.scheduledAnnouncements.restart-1"
+    translate: true
   - cron: "30 9 * * *"
-    message: "<green>Scheduled daily restart in % minute$"
+    message: "civ.scheduledAnnouncements.restart"
     bossbar_seconds: 1800
+    translate: true
 
-restart:
-  bar: "<dark_green>Update restart in % minute$"
-  message: "<gold>[CivMC] <dark_green>Server is restarting for an update in % minute$"
-  kick: "Server is restarting for an update"
+  - cron: "* * * * *"
+    message: "civ.scheduledAnnouncements.test"
+    translate: true

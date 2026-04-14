@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -18,9 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import net.kyori.adventure.internal.Internals;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.Translator;
 import net.kyori.adventure.util.TriState;
@@ -98,8 +102,18 @@ public class CivTranslationStore implements Translator {
             return null;
         }
 
-        // TODO: handle custom args if we want that
-        return mm.deserialize(miniMessageString);
+        List<? extends ComponentLike> arguments = component.arguments();
+        if (arguments.isEmpty()) {
+            return mm.deserialize(miniMessageString);
+        }
+
+        TagResolver.Builder resolver = TagResolver.builder();
+        for (int i = 0; i < arguments.size(); i++) {
+            Component renderedArgument = GlobalTranslator.render(arguments.get(i).asComponent(), locale);
+            resolver.resolver(Placeholder.component("arg" + i, renderedArgument));
+        }
+
+        return mm.deserialize(miniMessageString, resolver.build());
     }
 
     /**

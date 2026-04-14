@@ -1,10 +1,17 @@
 {
     "restart": {
-        "bar": "<dark_green>Update restart in % minute$",
-        "join-message": "<gold>[CivMC] <dark_green>Server is restarting for an update in % minute$",
-        "kick": "Server is restarting for an update"
+        "bar": "<dark_green>Update restart in <arg0> <arg1>",
+        "join-message": "<gold>[CivMC] <dark_green>Server is restarting for an update in <arg0> <arg1>",
+        "kick": "Server is restarting for an update",
+        "minute": "minute",
+        "minutes": "minutes"
     },
     "scheduledAnnouncements": {
+        "restart": "<green>Scheduled daily restart in <arg0> <arg1>",
+        "restart-1": "<green>Scheduled daily restart in 1 minute",
+        "restart-5": "<green>Scheduled daily restart in 5 minutes",
+        "restart-15": "<green>Scheduled daily restart in 15 minutes",
+        "restart-30": "<green>Scheduled daily restart in 30 minutes",
         "test": "<gold>[CivMC] <dark_green>This is a test announcement"
     }
 }
