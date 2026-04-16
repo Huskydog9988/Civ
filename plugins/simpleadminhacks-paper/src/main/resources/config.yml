@@ -101,6 +101,10 @@ hacks:
       - SLOW_FALLING
   DebugWand:
     enabled: true
+  ServerLinksHack:
+    enabled: false
+    discordUrl: https://discord.gg/ [...]
+    patreonUrl: https://www.patreon.com/ [...]
   DogFacts:
     enabled: false
     intervalTime: 30m
