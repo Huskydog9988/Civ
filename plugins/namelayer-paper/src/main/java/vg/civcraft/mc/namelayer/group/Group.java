@@ -578,6 +578,9 @@ public class Group {
      * @return true if the UUID belongs to the owner of the group, false otherwise.
      */
     public boolean isOwner(UUID uuid) {
+        if (owner == null) {
+            return false;
+        }
         return owner.equals(uuid);
     }
 
