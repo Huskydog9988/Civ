@@ -116,9 +116,9 @@ public class CivScoreBoard {
     }
 
     /**
-     * Trims provided
-     * @param text
-     * @return
+     * Trims provided text so user's screen isn't consumed in text
+     * @param text Text to trim
+     * @return normalized text
      */
     private static String normalizeScoreText(String text) {
         if (text.length() > 40) {
