@@ -3,7 +3,7 @@ package net.civmc.zorweth.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import net.civmc.nameapi.Migrator;
+import net.civmc.database.Migrator;
 
 public final class ZorwethDatabase {
 

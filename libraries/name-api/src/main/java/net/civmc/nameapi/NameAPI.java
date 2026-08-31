@@ -10,7 +10,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import net.civmc.migratior.Migrator;
+import net.civmc.database.Migrator;
 
 public class NameAPI {
 

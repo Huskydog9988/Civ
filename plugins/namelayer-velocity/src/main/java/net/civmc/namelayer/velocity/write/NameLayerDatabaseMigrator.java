@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 import javax.sql.DataSource;
-import net.civmc.nameapi.Migrator;
+import net.civmc.database.Migrator;
 import org.slf4j.Logger;
 
 public final class NameLayerDatabaseMigrator {

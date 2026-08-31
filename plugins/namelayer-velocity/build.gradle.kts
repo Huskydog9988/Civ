@@ -13,5 +13,6 @@ dependencies {
     api(libs.mariadb.client)
     api(libs.rabbitmq.client)
     api(project(":libraries:name-api"))
+    api(project(":libraries:database-manager"))
     api(project(":libraries:namelayer-sync"))
 }

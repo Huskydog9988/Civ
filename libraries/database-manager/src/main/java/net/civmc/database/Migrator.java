@@ -1,4 +1,4 @@
-package net.civmc.migratior;
+package net.civmc.database;
 
 import org.intellij.lang.annotations.Language;
 import java.sql.Connection;
