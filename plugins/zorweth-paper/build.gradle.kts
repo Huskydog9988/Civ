@@ -13,7 +13,6 @@ dependencies {
     compileOnly(project(":plugins:namelayer-paper"))
     compileOnly(project(":plugins:exilepearl-paper"))
     compileOnly(libs.luckperms.api)
-    api(project(":libraries:name-api"))
     api(project(":libraries:database-manager"))
     compileOnly(libs.worldedit)
     compileOnly(files("../../ansible/src/paper-plugins/BreweryX-3.6.3.jar"))

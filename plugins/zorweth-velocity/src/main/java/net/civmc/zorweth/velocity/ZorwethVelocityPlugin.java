@@ -10,7 +10,9 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -30,13 +32,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import net.civmc.nameapi.velocity.NameApiVelocityPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-@Plugin(id = "zorweth", name = "Zorweth", version = "1.0.0", authors = {"Okx"})
+@Plugin(id = "zorweth", name = "Zorweth", version = "1.0.0", authors = {"Okx"}, dependencies = {
+    @Dependency(id = "name-api")
+})
 public final class ZorwethVelocityPlugin {
 
     private final ProxyServer server;
@@ -60,11 +65,17 @@ public final class ZorwethVelocityPlugin {
         loadConfig();
         this.dataSource = createDataSource();
         this.router = new RocketTransferRouter(this.dataSource);
-        registerCommands();
-    }
 
-    public void setOfflinePlayerResolver(final Function<String, UUID> offlinePlayerResolver) {
-        this.offlinePlayerResolver = Objects.requireNonNull(offlinePlayerResolver);
+        final Optional<NameApiVelocityPlugin> nameApiPlugin = server.getPluginManager().getPlugin("name-api")
+            .flatMap(PluginContainer::getInstance)
+            .map(NameApiVelocityPlugin.class::cast);
+        if (nameApiPlugin.isPresent()) {
+            this.offlinePlayerResolver = Objects.requireNonNull(nameApiPlugin.get().getNameAPI()::getUUID);
+        } else {
+            this.logger.error("Name Api Plugin not found! It is required to properly resolve player names");
+        }
+
+        registerCommands();
     }
 
     @Subscribe

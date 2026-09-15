@@ -71,6 +71,7 @@ dependencies {
     pvpPlugin(project(path = ":plugins:namecolors-paper"))
     pvpPlugin(project(path = ":plugins:citadel-paper"))
 
+    proxyPlugin(project(path = ":plugins:name-api-velocity", configuration = "shadow"))
     proxyPlugin(project(path = ":plugins:civproxy-velocity", configuration = "shadow"))
     proxyPlugin(project(path = ":plugins:announcements-velocity", configuration = "shadow"))
     proxyPlugin(project(path = ":plugins:kiragateway-velocity", configuration = "shadow"))

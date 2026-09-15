@@ -1,20 +1,20 @@
-package net.civmc.civproxy.renamer;
+package net.civmc.nameapi.velocity.renamer;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
-import net.civmc.civproxy.CivProxyPlugin;
 import net.civmc.nameapi.NameAPI;
+import net.civmc.nameapi.velocity.NameApiVelocityPlugin;
 
 public class PlayerRenamer {
 
-    private final CivProxyPlugin plugin;
+    private final NameApiVelocityPlugin plugin;
     private final ProxyServer server;
 
     private final NameAPI nameAPI;
 
-    public PlayerRenamer(CivProxyPlugin plugin, ProxyServer server, NameAPI nameAPI) {
+    public PlayerRenamer(NameApiVelocityPlugin plugin, ProxyServer server, NameAPI nameAPI) {
         this.plugin = plugin;
         this.server = server;
         this.nameAPI = nameAPI;
@@ -34,7 +34,6 @@ public class PlayerRenamer {
     }
 
     public void start() {
-        nameAPI.migrate();
         server.getEventManager().register(plugin, this);
         server.getCommandManager().register(server.getCommandManager().metaBuilder("changeplayername").aliases("nlcpn").plugin(plugin).build(),
             new ChangePlayerNameCommand(server, nameAPI));

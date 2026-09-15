@@ -11,4 +11,5 @@ dependencies {
     api(libs.configurate.yaml)
     api(libs.hikaricp)
     api(libs.mariadb.client)
+    compileOnly(project(":plugins:name-api-velocity"))
 }

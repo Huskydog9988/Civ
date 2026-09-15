@@ -1,12 +1,12 @@
-package net.civmc.civproxy.renamer;
+package net.civmc.nameapi.velocity.renamer;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.civmc.nameapi.NameAPI;
-import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.UUID;
+import net.civmc.nameapi.NameAPI;
+import net.kyori.adventure.text.Component;
 
 public class ChangePlayerNameCommand implements SimpleCommand {
 

@@ -8,21 +8,21 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.zaxxer.hikari.HikariConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import com.zaxxer.hikari.HikariDataSource;
-import net.civmc.civproxy.renamer.PlayerRenamer;
-import net.civmc.nameapi.NameAPI;
 import net.civmc.zorweth.velocity.ZorwethVelocityPlugin;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-@Plugin(id = "civproxy", name = "CivProxy", version = "1.0.0", authors = {"Okx"}, dependencies = {@Dependency(id = "ajqueue"), @Dependency(id = "luckperms"), @Dependency(id = "zorweth")})
+@Plugin(id = "civproxy", name = "CivProxy", version = "1.0.0", authors = {"Okx"}, dependencies = {
+    @Dependency(id = "ajqueue"),
+    @Dependency(id = "luckperms"),
+    @Dependency(id = "zorweth")
+})
 public class CivProxyPlugin {
 
     private final ProxyServer server;
@@ -30,7 +30,6 @@ public class CivProxyPlugin {
 
     private CommentedConfigurationNode config;
 
-    private NameAPI nameAPI;
     @Inject
     public CivProxyPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = server;
@@ -45,44 +44,18 @@ public class CivProxyPlugin {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        loadNameApiConfig();
         new PlayerCount(this, server).start();
-        new PlayerRenamer(this, server, this.nameAPI).start();
+
         final Optional<ZorwethVelocityPlugin> zorweth = server.getPluginManager().getPlugin("zorweth")
             .flatMap(PluginContainer::getInstance)
             .map(ZorwethVelocityPlugin.class::cast);
         if (zorweth.isPresent()) {
-            zorweth.get().setOfflinePlayerResolver(this.nameAPI::getUUID);
             if (server.getPluginManager().isLoaded("ajqueue")) {
                 new QueueListener(this, server, zorweth.get()).start();
             }
         } else {
             this.logger.error("Zorweth is required for route management, but its plugin instance was not available");
         }
-    }
-
-    private void loadNameApiConfig() {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        CommentedConfigurationNode database = config.node("database");
-
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:" + database.node("driver").getString("mariadb") + "://" + database.node("host").getString("localhost") + ":" +
-            database.node("port").getInt(3306) + "/" + database.node("database").getString("minecraft"));
-        config.setConnectionTimeout(database.node("connection_timeout").getInt(10_000));
-        config.setIdleTimeout(database.node("idle_timeout").getInt(600_000));
-        config.setMaxLifetime(database.node("max_lifetime").getInt(7_200_000));
-        config.setMaximumPoolSize(database.node("poolsize").getInt(10));
-        config.setUsername(database.node("user").getString("root"));
-        String password = database.node("password").getString();
-        if (password != null && !password.isBlank()) {
-            config.setPassword(password);
-        }
-        this.nameAPI = new NameAPI(this.logger, new HikariDataSource(config));
     }
 
     /**
